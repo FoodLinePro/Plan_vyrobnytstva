@@ -577,6 +577,10 @@ table.b-ell { min-width: 720px; } .b-ell td.n { font: 600 12.5px/1.3 var(--f-dat
 .plan .st-truck { fill: #f3f4f5; stroke: #3d4650; stroke-width: 110; } .plan .st-gazebo { fill: #a0703f; stroke: #5a3b28; stroke-width: 120; }
 .plan .st-sheep { fill: #ffffff; stroke: #2c2826; stroke-width: 120; }
 
+.b3-lost { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; text-align: center; background: var(--sheet, #fff); color: var(--ink, #1b242c); font: 500 14px/1.4 var(--f-body); z-index: 5; }
+.b3-lost[hidden] { display: none; }
+.b3-lost button { min-height: 40px; padding: 0 16px; border: 1.5px solid currentColor; border-radius: 4px; background: transparent; color: inherit; font: 600 14px/1 var(--f-body); cursor: pointer; }
+
 /* PDF за вибором: кнопка під перемикачем частин і вікно вибору */
 .doc-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 8px; }
 .doc-bar span { font: 500 12.5px/1.35 var(--f-body); color: var(--ink-2); min-width: 0; }
@@ -2768,11 +2772,18 @@ function buildDevice(e) {
 function initView3D(host, labelLayer) {
   const H = BLOCK.h / 1000, mmv = (x, y, z) => new THREE.Vector3(x / 1000, (z || 0) / 1000, y / 1000);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);   // телефон: менша щільність пікселів
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2));
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setClearColor(0x000000, 0);
   host.appendChild(renderer.domElement);
+  /* браузер може забрати відеокарту (на телефоні бракує пам’яті) — показуємо, що сталося, і даємо перезапустити */
+  let lost = false; const lostBox = document.createElement('div'); lostBox.className = 'b3-lost'; lostBox.hidden = true;
+  lostBox.innerHTML = '<p>Браузер зупинив 3D-модель: телефону забракло ресурсів відеокарти.</p><button type="button">Перезапустити 3D</button>'; host.appendChild(lostBox);
+  lostBox.querySelector('button').addEventListener('click', () => { if (renderer.forceContextRestore) try { renderer.forceContextRestore(); } catch (e) { /* далі — перезавантаження */ } setTimeout(() => { if (lost) location.reload(); }, 2500); });
+  renderer.domElement.addEventListener('webglcontextlost', e => { e.preventDefault(); lost = true; lostBox.hidden = false; if (labelLayer) labelLayer.hidden = true; }, false);
+  renderer.domElement.addEventListener('webglcontextrestored', () => { lost = false; lostBox.hidden = true; if (labelLayer) labelLayer.hidden = false; render(); }, false);
   renderer.domElement.setAttribute('aria-label', '3D-модель технічного блоку');
 
   const scene = new THREE.Scene();
@@ -2925,7 +2936,7 @@ function initView3D(host, labelLayer) {
     });
   }
   function render() {
-    apply(); renderer.render(scene, camera);
+    if (lost) return; apply(); renderer.render(scene, camera);
     const w = host.clientWidth, h = host.clientHeight;
     const put = (l, vis) => { tmp.copy(l.p).project(camera);
       const on = vis && tmp.z < 1 && tmp.z > -1 && Math.abs(tmp.x) < 1.02 && Math.abs(tmp.y) < 1.02; l.el.hidden = !on;
@@ -4594,7 +4605,7 @@ function b3SiteBuild(env) {
         bx(g, 0.1, 2.4, 2.2, m(E[0]) - 0.05, GL + 1.2, m(E[1]), glass); bx(g, 0.04, 2.4, 0.06, m(E[0]) - 0.11, GL + 1.2, m(E[1]), mat(0xb8bec4, 0.4));
         bx(g, 1.8, 0.16, 3.6, m(E[0]) - 0.9, GL + 3.05, m(E[1]), dark); bx(g, 1.6, 0.12, 3.0, m(E[0]) - 0.8, GL + 0.06, m(E[1]), mat(0xb3b0a8, 0.9));
         tagAt('Вхід в офіс', E[0] - 1500, E[1], GL + 3.9); }
-      if (b.kind === 'store') { box(g, m(bb.x0), m(bb.y0), m(bb.x1), m(bb.y1), GL, GL + 0.6, dark);
+      if (b.kind === 'store') { box(g, m(bb.x0) - 0.03, m(bb.y0) - 0.03, m(bb.x1) + 0.03, m(bb.y1) + 0.03, GL, GL + 0.6, dark);   // цоколь трохи ширший за стіну — без мерехтіння
         for (let x = 33; x < m(bb.x1) - 2; x += 6) box(g, x - 1.5, m(bb.y1) - 0.02, x + 1.5, m(bb.y1) + 0.06, -0.02, 3.2, gateM, true);
         for (let x = m(bb.x0) + 2; x < m(bb.x1) - 2.5; x += 3.3) [[m(bb.y0) + 2, -14], [-12, 10.5]].forEach(([za, zb]) => pvArray(g, zb - za, 2.1, x + 1.05, y1 + 0.75, (za + zb) / 2, 0.26)); }  // панелі рядами на південь
       if (b.kind === 'shed') gates(g, b.p, 1, 0, 3, 3.6, 3.6, GL);   // зашиті навіси, ворота з боку асфальтованого майданчика
@@ -4864,7 +4875,51 @@ function b3SiteBuild(env) {
       s.g.position.x = s.x; s.g.position.z = s.z; s.g.rotation.y = -s.a; });
   }
   const noWalk = (X, Y) => inPoly(X, Y, S.pond);
+  /* менше викликів малювання, щоб модель тягнули телефони: однакові матеріали зливаються в одну сітку — у кожній будівлі, що стає прозорою, у кожній тварині
+     окремо (голова й хвіст рухаються), решта ділянки — квадратами по 24 м; розмітка парковки — квадратами по 40 м */
+  const cont = new Set([...fades.map(f => f.g), ...birds.flatMap(b => [b.g, b.head, b.tail]), ...sheep.flatMap(q => [q.g, q.head])]);
+  if (!(typeof location !== 'undefined' && /nomerge/.test(location.search))) { b3Merge(site, cont, 24); b3Merge(ground, new Set(), 40, o => o.geometry.type === 'BoxGeometry'); }
+  [...birds, ...sheep].forEach(q => q.g.traverse(o => { o.castShadow = false; }));          // тварини рухаються, а карта тіней не перемальовується щокадру
   return { ground, site, tags, fades, birds, sheep, step, noWalk };
+}
+/* злиття статичних сіток (і ліній) з однаковим матеріалом у межах «контейнера»: кожна вихідна сітка лишає свою коробку в userData.parts,
+   щоб прогулянка й далі обходила її так само, як окрему сітку */
+function b3Merge(root, cont, cell, only) {
+  root.updateMatrixWorld(true);
+  const imgId = new Map(), texCanon = new Map(), B = new Map(), dead = [], rel = new THREE.Matrix4(), inv = new THREE.Matrix4(), nm = new THREE.Matrix3(), v = new THREE.Vector3(), w = new THREE.Vector3();
+  const img = t => { if (!t) return ''; const k = t.image || t; if (!imgId.has(k)) imgId.set(k, imgId.size + 1); return 'i' + imgId.get(k); };
+  const sig = m => [m.type, m.color ? m.color.getHex() : '', m.roughness, m.metalness, m.emissive ? m.emissive.getHex() : '', m.emissiveIntensity, img(m.map), m.transparent, m.opacity, m.side,
+    m.depthWrite, m.depthTest, m.polygonOffset, m.polygonOffsetFactor, m.polygonOffsetUnits, m.flatShading, m.vertexColors].join('|');
+  const plainTex = t => t.repeat.x === 1 && t.repeat.y === 1 && t.offset.x === 0 && t.offset.y === 0;
+  const canonMat = m => { if (!m.map || plainTex(m.map)) return m; const k = sig(m); if (!texCanon.has(k)) { const c = m.clone(); c.map = m.map.clone(); c.map.repeat.set(1, 1); c.map.offset.set(0, 0); c.map.needsUpdate = true; texCanon.set(k, c); } return texCanon.get(k); };
+  const where = o => { for (let p = o.parent; p; p = p.parent) if (p === root || cont.has(p)) return p; return null; };
+  const list = []; root.traverse(o => { if ((o.isMesh || o.isLineSegments) && o.geometry && o.visible && !o.isInstancedMesh && !o.userData.floorOnly && (!only || only(o))) list.push(o); });   // похилі поверхні, по яких ходять, лишаються окремими: висоту під ногами дає точний промінь
+  list.forEach(o => {
+    const ct = where(o); if (!ct) return; const mats = Array.isArray(o.material) ? o.material : null;
+    if ((mats || [o.material]).some(m => m.map && m.map.rotation)) return;
+    rel.copy(inv.copy(ct.matrixWorld).invert()).multiply(o.matrixWorld);
+    const g0 = o.geometry, src = g0.index ? g0.toNonIndexed() : g0, P = src.attributes.position, N = src.attributes.normal, U = src.attributes.uv, flip = rel.determinant() < 0; nm.getNormalMatrix(rel);
+    if (!g0.boundingBox) g0.computeBoundingBox();
+    let ck = ''; if (ct === root && cell) { v.setFromMatrixPosition(o.matrixWorld); ck = Math.floor(v.x / cell) + ':' + Math.floor(v.z / cell); }
+    const grs = mats ? (src.groups.length ? src.groups : [{ start: 0, count: P.count, materialIndex: 0 }]) : [{ start: 0, count: P.count }]; let first = null;
+    grs.forEach(gr => { const m0 = mats ? mats[gr.materialIndex] : o.material; if (!m0 || m0.visible === false) return;
+      const line = !!o.isLineSegments, key = ct.uuid + (line ? '|L|' : '|M|') + sig(m0) + '|' + o.castShadow + o.receiveShadow + '|' + ck;
+      let b = B.get(key); if (!b) B.set(key, b = { ct, line, m: line ? m0 : canonMat(m0), cast: o.castShadow, recv: o.receiveShadow, p: [], n: [], u: [], parts: [], needN: false });
+      const tex = !line && b.m.map ? m0.map : null, end = Math.min(P.count, gr.start + gr.count);
+      const put = i => { v.fromBufferAttribute(P, i).applyMatrix4(rel); b.p.push(v.x, v.y, v.z); if (line) return;
+        if (N) { w.fromBufferAttribute(N, i).applyMatrix3(nm).normalize(); b.n.push(w.x, w.y, w.z); } else { b.n.push(0, 1, 0); b.needN = true; }
+        if (tex) { const uu = U ? U.getX(i) : 0, vv = U ? U.getY(i) : 0; b.u.push(uu * tex.repeat.x + tex.offset.x, vv * tex.repeat.y + tex.offset.y); } };
+      if (line) for (let i = gr.start; i < end; i++) put(i);
+      else for (let i = gr.start; i + 2 < end; i += 3) { put(i); if (flip) { put(i + 2); put(i + 1); } else { put(i + 1); put(i + 2); } }
+      if (!first) first = b; });
+    if (first && o.isMesh) first.parts.push({ lb: g0.boundingBox.clone(), m: rel.clone(), floorOnly: (g0.type === 'ExtrudeGeometry' && !o.userData.solid) || !!o.userData.floorOnly });
+    if (src !== g0) src.dispose(); dead.push(o); });
+  dead.forEach(o => o.parent.remove(o));
+  B.forEach(b => { if (!b.p.length) return; const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(b.p, 3)); let o;
+    if (b.line) o = new THREE.LineSegments(g, b.m);
+    else { g.setAttribute('normal', new THREE.Float32BufferAttribute(b.n, 3)); if (b.u.length) g.setAttribute('uv', new THREE.Float32BufferAttribute(b.u, 2)); if (b.needN) g.computeVertexNormals();
+      o = new THREE.Mesh(g, b.m); o.castShadow = b.cast; o.receiveShadow = b.recv; o.userData.parts = b.parts; }
+    g.computeBoundingBox(); g.computeBoundingSphere(); o.userData.merged = true; b.ct.add(o); });
 }
 
 /* ── схема території для сторінки і міні-плану прогулянки: координати моделі, мм (X праворуч, Y донизу); rot — поворот підписів ── */
@@ -4925,8 +4980,11 @@ function b3SiteWhere(X, Y) {
 
 /* 3D-модель будівлі: три поверхи, технічний блок на своєму місці, існуюча будівля поруч. Керування як у моделі техблоку. */
 function b3Init3D(host, labelLayer) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); renderer.outputEncoding = THREE.sRGBEncoding;
+  const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);   // телефон чи планшет: менша щільність пікселів, щоб не перевантажити відеокарту
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2)); renderer.outputEncoding = THREE.sRGBEncoding;
+  /* тіні нерухомі (сонце й кадр тіні не залежать від камери), тож карта тіней перемальовується лише тоді, коли щось з’являється чи зникає */
+  renderer.shadowMap.autoUpdate = false; let shadowDirty = true;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.setClearColor(0x000000, 0);
   host.appendChild(renderer.domElement); renderer.domElement.setAttribute('aria-label', '3D-модель виробничої будівлі');
   const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1200);
@@ -5186,6 +5244,17 @@ function b3Init3D(host, labelLayer) {
       const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.018, 24), steel); plate.position.set(t.x / 1000, t.lvl / 1000 + 0.01, t.y / 1000); sewG[t.fl].add(plate); (sewBox[t.id] = sewBox[t.id] || []).push(plate); });
   }
 
+  /* злиття статичних сіток будівлі (менше викликів малювання, щоб модель тягнули телефони). Окремими лишаються: стіни, що стають прозорими,
+     цоколь, каналізація (її труби підсвічуються поштучно), підлоги з отворами й земля (по них ходять). Кожна позиція обладнання, меблів
+     і електрики — свій контейнер, бо її можна сховати фільтром і вибрати кліком. Вимкнути для перевірки: ?nomerge у адресі */
+  if (typeof b3Merge === 'function' && !/nomerge/.test(location.search)) {
+    const keepM = new Set(walls.flatMap(w => [w.mat, w.em])), sewS = new Set(Object.values(sewG));
+    const inSew = o => { for (let p = o.parent; p; p = p.parent) if (sewS.has(p)) return true; return false; };
+    const cont = new Set([eqG, furnG, lnG, elG, elG1, facG, ...eqG.children, ...furnG.children, ...lnG.children, ...elG.children, ...elG1.children, ...facG.children]);
+    const ok = o => !keepM.has(o.material) && o !== plinth && !inSew(o) && !(o.geometry.type === 'ExtrudeGeometry' && !o.userData.solid) && o.parent !== G.ground;
+    [G.f0, G.f1, G.f2, G.tb, G.ctx].forEach(r => b3Merge(r, cont, 0, ok));
+  }
+
   /* підсвітка вибраної зони і мітки приміщень */
   const hlMat = new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.45, depthWrite: false }); let hl = null;
   const tag = (text, title, fn) => { const el = document.createElement('button'); el.type = 'button'; el.className = 'tag3d room'; el.textContent = text; if (title) el.title = title; el.addEventListener('click', fn); labelLayer.appendChild(el); return el; };
@@ -5201,11 +5270,11 @@ function b3Init3D(host, labelLayer) {
   const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3();
   /* тіні: для території — на всю ділянку, інакше щільніше навколо будівлі */
   function shadowFit() { const c = sun.shadow.camera, big = siteView && !W.on;
-    if (c.userData.big === big) return; c.userData.big = big;
+    if (c.userData.big === big) return; c.userData.big = big; shadowDirty = true;
     if (big) { Object.assign(c, { left: -110, right: 110, top: 100, bottom: -100, near: 1, far: 400 }); sun.position.set(-40, 90, 110); sun.target.position.set(20, 0, 14); }
     else { Object.assign(c, { left: -32, right: 32, top: 30, bottom: -30, near: 1, far: 120 }); sun.position.set(-8, 34, 38); sun.target.position.set(15, 0, 9); }
     c.updateProjectionMatrix(); }
-  function visibility() {
+  function visibility() { shadowDirty = true;
     if (W.on) { walkVis(); return; }
     G.f0.visible = whole || floor === 'f0'; G.f1.visible = whole || floor !== 'f0'; G.f2.visible = whole || floor === 'f2'; G.roof.visible = whole;
     G.tb.visible = G.ctx.visible = G.ground.visible = whole || floor !== 'f0'; G.site.visible = !docMode && (whole || floor !== 'f0'); scene.background = null; shadowFit(); if (hl) hl.visible = !whole && hl.userData.floor === floor; need = true;
@@ -5227,6 +5296,7 @@ function b3Init3D(host, labelLayer) {
       const fade = !whole && w.floor === floor && a * b < 0 && Math.abs(a) > 0.1, o = fade ? 0.08 : 1; w.mat.opacity = o; w.mat.depthWrite = o > 0.5; w.em.opacity = o > 0.5 ? 0.5 : 0.25; });
   }
   function render() {
+    if (lost) return; if (shadowDirty && sun.castShadow) { renderer.shadowMap.needsUpdate = true; shadowDirty = false; }
     apply(); renderer.render(scene, camera); const w = host.clientWidth, h = host.clientHeight;
     const sv = [];
     tags.forEach(l => { tmp.copy(l.p).project(camera); const on = showTags && !W.on && (l.site ? siteView : whole ? false : l.floor === floor) && tmp.z < 1 && Math.abs(tmp.x) < 1.02 && Math.abs(tmp.y) < 1.02; l.el.hidden = !on;
@@ -5247,12 +5317,22 @@ function b3Init3D(host, labelLayer) {
       if (!f) { if (minor) { l.el.hidden = true; return; } cmp = true; f = { y: s.y, r: [s.x - l.szc[0] / 2, s.y - l.szc[1] / 2, s.x + l.szc[0] / 2, s.y + l.szc[1] / 2] }; }
       l.el.classList.toggle('cmp', cmp); placed.push(f.r);
       l.el.style.transform = `translate(-50%,-50%) translate(${s.x.toFixed(1)}px,${f.y.toFixed(1)}px)`; }); }
-  let seen = true, birdT = 0, birdsOn = true;
+  let seen = true, birdT = 0, birdsOn = true, lost = false, slowT = 0, lastT = 0;
+  /* якщо браузер забрав відеокарту (бракує пам’яті на телефоні) — повідомлення й перезапуск замість порожнього поля */
+  const lostBox = document.createElement('div'); lostBox.className = 'b3-lost'; lostBox.hidden = true;
+  lostBox.innerHTML = '<p>Браузер зупинив 3D-модель: телефону забракло ресурсів відеокарти.</p><button type="button">Перезапустити 3D</button>'; host.appendChild(lostBox);
+  lostBox.querySelector('button').addEventListener('click', () => { birdsOn = false; if (renderer.forceContextRestore) try { renderer.forceContextRestore(); } catch (e) { /* далі — перезавантаження */ }
+    setTimeout(() => { if (lost) location.reload(); }, 2500); });
+  renderer.domElement.addEventListener('webglcontextlost', e => { e.preventDefault(); lost = true; birdsOn = false; lostBox.hidden = false; labelLayer.hidden = true; }, false);
+  renderer.domElement.addEventListener('webglcontextrestored', () => { lost = false; lostBox.hidden = true; labelLayer.hidden = false; shadowDirty = true; need = true; }, false);
   if (window.IntersectionObserver) new IntersectionObserver(es => { seen = es[0].isIntersecting; }).observe(host);
   function loop(t) {
     const dt = Math.min(0.05, Math.max(0, (t - (W.t || t)) / 1000)); W.t = t;
     if (W.on && walkStep(dt)) need = true;
-    if (SITE && birdsOn && (SITE.birds.length || SITE.sheep.length) && G.site.visible && (siteView || W.on) && seen && !document.hidden) { birdT += dt; if (birdT > 0.05) { SITE.step(Math.min(0.1, birdT)); birdT = 0; need = true; } }
+    const animOn = SITE && birdsOn && (SITE.birds.length || SITE.sheep.length) && G.site.visible && (siteView || W.on) && seen && !document.hidden;
+    if (animOn) { birdT += dt; if (birdT > 0.05) { SITE.step(Math.min(0.1, birdT)); birdT = 0; need = true; }
+      const fi = lastT ? t - lastT : 16; slowT = fi > 180 ? slowT + 1 : Math.max(0, slowT - 1); if (slowT > 12) birdsOn = false; }   // пристрій не встигає — тварини завмирають, модель лишається
+    lastT = animOn ? t : 0;
     if (anim) { const k = Math.min(1, (t - anim.t0) / anim.ms), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
       ['theta', 'phi', 'r'].forEach(q => { st[q] = anim.a[q] + (anim.b[q] - anim.a[q]) * e; }); st.target.lerpVectors(anim.a.target, anim.b.target, e); need = true; if (k >= 1) anim = null; }
     if (need) { need = false; render(); } requestAnimationFrame(loop);
@@ -5287,20 +5367,25 @@ function b3Init3D(host, labelLayer) {
   const EYE = 1.6, RAD = 0.3, STEP = 0.45, DROP = 0.65, LVL = { f0: -3.0, f1: 0, f2: 4.9 }, FLN = { f0: 'Технічний поверх', f1: '1 поверх', f2: '2 поверх' };
   const floorOf = y => y < -1.75 ? 'f0' : y < 3.6 ? 'f1' : 'f2';
   const SPAWN = { f1: [[21500, 17100, Math.PI + 0.5], [15000, 9500, Math.PI], [29000, 1200, Math.PI / 2]], f2: [[17000, 9000, Math.PI], [20500, 16600, Math.PI + 0.6], [29000, -1500, Math.PI / 2]], f0: [[15000, 9000, 0], [20000, 6000, Math.PI]] };
-  const ray = new THREE.Raycaster(), vO = new THREE.Vector3(), vD = new THREE.Vector3(), vP = new THREE.Vector3(), vQ = new THREE.Vector3(), memo = new WeakMap();
+  const rayL = new THREE.Ray(), ray = new THREE.Raycaster(), vO = new THREE.Vector3(), vD = new THREE.Vector3(), vP = new THREE.Vector3(), vQ = new THREE.Vector3(), memo = new WeakMap();
   /* що може заважати: усі видимі сітки, крім підсвітки і майже прозорих оболонок (укриття) */
   function buildCol() {
     scene.updateMatrixWorld(true); W.col = [];
     scene.traverseVisible(o => { if (!o.isMesh || !o.geometry) return; const m = o.material; if (!m || m === eqHlMat || m === hlMat || (m.transparent && m.opacity < 0.25) || (o.parent && o.parent.userData.pass)) return;   // санпропускник прохідний, як турнікет
+      if (o.userData.parts) { let a = memo.get(o); if (!a) { a = o.userData.parts.map(p => { const mw = o.matrixWorld.clone().multiply(p.m); return { o, part: true, b: p.lb.clone().applyMatrix4(mw), mw, inv: mw.clone().invert(), lb: p.lb, floorOnly: p.floorOnly }; }); memo.set(o, a); }
+        a.forEach(c => W.col.push(c)); return; }                                                     // злита сітка території: кожна вихідна сітка — своя коробка
       let c = memo.get(o); if (!c) { if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); const b = new THREE.Box3().setFromObject(o); if (b.isEmpty()) return;
         c = { o, b, mw: o.matrixWorld.clone(), inv: o.matrixWorld.clone().invert(), lb: o.geometry.boundingBox, floorOnly: (o.geometry.type === 'ExtrudeGeometry' && !o.userData.solid) || o.parent === G.ground || !!o.userData.floorOnly }; memo.set(o, c); }
       W.col.push(c); });
   }
   /* висота підлоги під точкою: промінь згори вниз від рівня «можна переступити» */
   function standAt(x, z, base) {
-    const y0 = base + STEP + 0.05, y1 = base - DROP - 0.1, list = W.col.filter(c => c.b.min.x <= x && c.b.max.x >= x && c.b.min.z <= z && c.b.max.z >= z && c.b.max.y >= y1 && c.b.min.y <= y0).map(c => c.o);
-    if (!list.length) return null; ray.set(vO.set(x, y0, z), vD.set(0, -1, 0)); ray.near = 0; ray.far = y0 - y1; const h = ray.intersectObjects(list, false);
-    if (!h.length) return null; const g = h[0].point.y; return g > base + STEP || g < base - DROP ? null : g;
+    const y0 = base + STEP + 0.05, y1 = base - DROP - 0.1, cand = W.col.filter(c => c.b.min.x <= x && c.b.max.x >= x && c.b.min.z <= z && c.b.max.z >= z && c.b.max.y >= y1 && c.b.min.y <= y0);
+    if (!cand.length) return null; ray.set(vO.set(x, y0, z), vD.set(0, -1, 0)); ray.near = 0; ray.far = y0 - y1; let g = -Infinity;
+    const list = cand.filter(c => !c.part).map(c => c.o); if (list.length) { const h = ray.intersectObjects(list, false); if (h.length) g = h[0].point.y; }
+    for (const c of cand) if (c.part) { rayL.copy(ray.ray).applyMatrix4(c.inv); if (c.lb.containsPoint(rayL.origin) || !rayL.intersectBox(c.lb, vQ)) continue;   // коробка злитої сітки: верх, якщо промінь іде згори
+      vQ.applyMatrix4(c.mw); if (vQ.y <= y0 && vQ.y >= y1 && vQ.y > g) g = vQ.y; }
+    return g === -Infinity || g > base + STEP || g < base - DROP ? null : g;
   }
   /* найменша відстань від «тіла» (три кулі на висоті колін, пояса й голови) до перешкод */
   function gap(x, z, g) {
@@ -5329,7 +5414,7 @@ function b3Init3D(host, labelLayer) {
     return moved;
   }
   /* поверх під ногами: видно його і все, що над ним; на технічному поверсі ховаємо землю й цоколь, які йдуть крізь його об’єм */
-  function walkVis() {
+  function walkVis() { shadowDirty = true;
     const b = W.fl === 'f0'; G.f0.visible = true; G.f1.visible = true; G.f2.visible = !b; G.roof.visible = !b; G.tb.visible = G.ctx.visible = G.ground.visible = G.site.visible = !b; plinth.visible = !b;
     if (hl) hl.visible = hl.userData.floor === W.fl; need = true;
   }
@@ -5371,7 +5456,7 @@ function b3Init3D(host, labelLayer) {
   /* клік у моделі: позиція обладнання, меблі або електроточка — як вибір на плані */
   function walkPick(e) {
     const r = el.getBoundingClientRect(), v = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
-    ray.setFromCamera(v, camera); ray.near = 0; ray.far = 25; const h = ray.intersectObjects(W.col.map(c => c.o), false)[0]; if (!h) return;
+    ray.setFromCamera(v, camera); ray.near = 0; ray.far = 25; const h = ray.intersectObjects([...new Set(W.col.map(c => c.o))], false)[0]; if (!h) return;
     for (let o = h.object; o; o = o.parent) { const u = o.userData || {}; const id = u.pos || u.el || u.id; if (id) { if (window.b3Select) window.b3Select(id, '3d'); return; } }
   }
   /* панель поверх моделі */
@@ -5414,7 +5499,7 @@ function b3Init3D(host, labelLayer) {
       host.classList.add('walking'); W.hud.box.hidden = false; teleport(floor); }
     else { W.on = false; W.keys.clear(); W.joy.x = W.joy.y = 0; if (W.hud) W.hud.box.hidden = true; host.classList.remove('walking');
       if (document.fullscreenElement === host) document.exitFullscreen();
-      sun.castShadow = true; hemi.intensity = 0.46; camera.fov = st.fov; camera.near = 0.1; camera.updateProjectionMatrix(); visibility(); setView(true); }
+      sun.castShadow = true; shadowDirty = true; hemi.intensity = 0.46; camera.fov = st.fov; camera.near = 0.1; camera.updateProjectionMatrix(); visibility(); setView(true); }
     need = true; if (W.cb.walk) W.cb.walk(W.on);
   }
   let sized = false;
@@ -5435,10 +5520,11 @@ function b3Init3D(host, labelLayer) {
     walkSim(codes, sec) { codes.forEach(c => W.keys.add(c)); const t0 = performance.now(); let n = 0; for (let t = 0; t < sec; t += 1 / 30, n++) walkStep(1 / 30); codes.forEach(c => W.keys.delete(c)); need = true; return (performance.now() - t0) / n; },
     setTags(v) { showTags = v; need = true; },
     orbit(theta, phi, k) { if (W.on) setWalk(false); anim = null; st.theta = theta; st.phi = phi; st.r *= (k || 1); need = true; },
+    info() { const c = { mesh: 0, cast: 0, line: 0, vis: 0 }; scene.traverse(o => { if (o.isMesh) { c.mesh++; if (o.castShadow) c.cast++; } if (o.isLineSegments) c.line++; }); scene.traverseVisible(o => { if (o.isMesh || o.isLine) c.vis++; }); return Object.assign(c, { calls: renderer.info.render.calls, tris: renderer.info.render.triangles, geo: renderer.info.memory.geometries, tex: renderer.info.memory.textures, prog: renderer.info.programs.length, site: (() => { let n = 0; G.site.traverse(o => { if (o.isMesh) n++; }); return n; })(), grp: (() => { const cnt = g => { let n = 0; g.traverse(o => { if (o.isMesh || o.isLine) n++; }); return n; }, r = {}; Object.entries(G).forEach(([k, g]) => { r[k] = cnt(g); }); Object.assign(r, { eq: cnt(eqG), furn: cnt(furnG), ln: cnt(lnG), el: cnt(elG) + cnt(elG1), fac: cnt(facG), sew: cnt(sewG.f0) + cnt(sewG.f1) + cnt(sewG.f2) }); return r; })() }); },
     look(cam, tgt) { if (W.on) setWalk(false); anim = null; const d = new THREE.Vector3(...cam).sub(new THREE.Vector3(...tgt)); st.target.set(...tgt); st.r = d.length(); st.phi = Math.acos(d.y / st.r); st.theta = Math.atan2(d.x, d.z); need = true; },
-    setEq(v) { eqG.visible = v; furnG.visible = v; lnG.visible = v; eqHl.forEach(h => { h.visible = false; }); if (W.on) buildCol(); need = true; },
-    setElec(v) { elG.visible = v; elG1.visible = v; facG.visible = v; if (W.on) buildCol(); need = true; },
-    setSew(v) { Object.values(sewG).forEach(g => { g.visible = v; }); if (W.on) buildCol(); need = true; },
+    setEq(v) { shadowDirty = true; eqG.visible = v; furnG.visible = v; lnG.visible = v; eqHl.forEach(h => { h.visible = false; }); if (W.on) buildCol(); need = true; },
+    setElec(v) { shadowDirty = true; elG.visible = v; elG1.visible = v; facG.visible = v; if (W.on) buildCol(); need = true; },
+    setSew(v) { shadowDirty = true; Object.values(sewG).forEach(g => { g.visible = v; }); if (W.on) buildCol(); need = true; },
     select(id) { if (hl) { scene.remove(hl); hl.geometry.dispose(); hl = null; } eqHl.splice(0).forEach(h => { if (h.parent) h.parent.remove(h); h.geometry.dispose(); }); need = true; if (!id) return;
       if (elBox[id]) { const bx = elBox[id], s = bx.getSize(new THREE.Vector3()), c = bx.getCenter(new THREE.Vector3()), r = Math.max(s.x, s.y, s.z) / 2 + 0.15, h = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), eqHlMat);
         h.position.copy(c); h.renderOrder = 4; elGrp[id].add(h); eqHl.push(h); return; }
@@ -5457,7 +5543,7 @@ function b3Init3D(host, labelLayer) {
       hl.position.y = fl.lvl / 1000 + (it.t === 'ledge' ? 1.63 : 0.04); hl.userData.floor = fl.id; hl.renderOrder = 4; hl.visible = !whole && fl.id === floor; scene.add(hl); },
     refresh() { need = true; },
     /* фільтри для документа: які системи електрики, меблі й обладнання видно */
-    setFilters(f) { docMode = !!f; visibility(); f = f || {};
+    setFilters(f) { shadowDirty = true; docMode = !!f; visibility(); f = f || {};
       elG.children.concat(elG1.children).forEach(g => { const e = g.userData.el && B3_ELBYID[g.userData.el]; if (e) g.visible = !f.el || f.el(e); });
       facG.visible = f.fac !== false && elG.visible; furnG.children.forEach(g => { const it = g.userData.id && B3_FURNBYID[g.userData.id]; if (it) g.visible = !f.furn || f.furn(it); });
       eqG.children.concat(lnG.children).forEach(g => { if (g.userData.pos) g.visible = !f.eq || f.eq(g.userData.pos); }); if (f.sew !== undefined) Object.values(sewG).forEach(g => { g.visible = f.sew; }); need = true; },
