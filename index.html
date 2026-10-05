@@ -4906,14 +4906,16 @@ const B3_HZ_GATES = {
     { x: 23200, y: 12300, k: 'Рукомийники', n: 'біля підйомника, на вході в зал і CIP-мийку' }, { x: 11800, y: 11480, k: 'Рукомийник', n: 'у залі біля колони 3/Б' }, { x: 5900, y: 11500, k: 'Рукомийник', n: 'у залі біля колони 2/Б' }]
 };
 const b3HzCells = fl => { const f = B3_FLOOR[fl]; return f.cells.length ? f.cells : f.rooms.filter(r => B3_HZ[r.id]).map(r => ({ id: r.id, poly: r.poly, label: r.label, area: r.area })); };
+/* вузькі коридори: значок зони поряд із номером, щоб не лягав на стіну чи позначку рівня */
+const B3_HZ_OFF = { '101.4': [0, -600], '201.9': [1150, -30] };
 /* шар на плані: заливка кольором зони, рамка і буква зони; техблок на першому поверсі — технічна зона */
 function b3ZoneSvg(o) {
   const fl = o.fl, out = [], P = p => p.map(q => q.join(',')).join(' ');
   b3HzCells(fl).forEach(c => { const z = B3_HZ[c.id]; if (!z) return;
     out.push(`<polygon class="hz-f hz-${z}" points="${P(c.poly)}"/>`); });
   if (fl === 'f1') out.push(`<rect class="hz-f hz-T" x="-300" y="18300" width="12430" height="6100"/>`);
-  b3HzCells(fl).forEach(c => { const z = B3_HZ[c.id]; if (!z) return; const [x, y] = o.at ? o.at(c) : c.label, dy = o.cells ? 760 : 0;
-    out.push(`<g class="hz-b hz-${z}" transform="translate(${x} ${y + dy})"><circle r="330"/><text text-anchor="middle" dominant-baseline="central" font-size="400">${z}</text></g>`); });
+  b3HzCells(fl).forEach(c => { const z = B3_HZ[c.id]; if (!z) return; const [x, y] = o.at ? o.at(c) : c.label, off = !o.at && B3_HZ_OFF[c.id], dx = off ? off[0] : 0, dy = off ? off[1] : o.cells ? 760 : 0;
+    out.push(`<g class="hz-b hz-${z}" transform="translate(${x + dx} ${y + dy})"><circle r="330"/><text text-anchor="middle" dominant-baseline="central" font-size="400">${z}</text></g>`); });
   if (fl === 'f1') out.push(`<g class="hz-b hz-T" transform="translate(11650 23800)"><circle r="330"/><text text-anchor="middle" dominant-baseline="central" font-size="400">T</text></g>`);
   return `<g class="b-hz">${out.join('')}</g>`;
 }
