@@ -585,8 +585,9 @@ table.b-ell { min-width: 720px; } .b-ell td.n { font: 600 12.5px/1.3 var(--f-dat
 :root { --steam: #c8102e; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --steam: #ff6b78; } }
 :root[data-theme="dark"] { --steam: #ff6b78; }
-.plan .st-p { fill: none; stroke: var(--steam); stroke-width: 90; stroke-linecap: round; }
-.plan .st-p.d32 { stroke-width: 65; } .plan .st-p.d25 { stroke-width: 55; }
+.plan .st-p { fill: none; stroke: var(--steam); stroke-width: 115; stroke-linecap: round; }
+.plan .st-p.d40 { stroke-width: 72; } .plan .st-p.d32 { stroke-width: 62; } .plan .st-p.d25 { stroke-width: 52; }
+.plan .st-trap rect { fill: var(--sheet); stroke: var(--steam); stroke-width: 34; } .plan .st-trap line { stroke: var(--steam); stroke-width: 26; }
 .plan .st-p.ex { stroke-dasharray: 300 180; stroke-linecap: butt; }
 .plan .st-riser circle { fill: var(--sheet); stroke: var(--steam); stroke-width: 45; } .plan .st-riser .dot { fill: var(--steam); stroke: none; }
 .plan .st-drop circle { fill: var(--sheet); stroke: var(--steam); stroke-width: 40; } .plan .st-drop line { stroke: var(--steam); stroke-width: 50; }
@@ -1067,15 +1068,18 @@ html { scroll-padding-top: calc(var(--hdr-h, 64px) + 10px); }
   </section>
 
   <section class="sec" aria-labelledby="b-h-steam">
-    <h2 id="b-h-steam">Паропровід від котелень до варочних котлів</h2>
-    <p class="lead">Пара з обох котелень (8 і 12) іде однією магістраллю: з кожної котельні труба виходить на висоті близько 3,6 м над землею, естакадою над газоном доходить до вузла біля поточного виробництва, далі йде всередині нього на підвісах від покрівлі, за 1,6 м від західної стіни, крізь стіну по осі А заходить на перший поверх і стояком біля цієї стіни, за 1,7 м від осі 3, піднімається на другий. Під перекриттям, на 3,85 м над підлогою, над проходом між площадками обслуговування магістраль доходить до колектора над вакуумними котлами; від колектора до кожного котла — опуск із засувкою, окремий відвід — до котла рідких соусів.</p>
+    <h2 id="b-h-steam">Паропровід від котелень до варочних котлів і CIP-мийки</h2>
+    <p class="lead">Пара з обох котелень (8 і 12) іде однією магістраллю: з кожної котельні труба виходить на висоті близько 3,6 м над землею, естакадою над газоном доходить до вузла біля поточного виробництва, далі йде всередині нього на підвісах від покрівлі, за 1,6 м від західної стіни, крізь стіну по осі А заходить на перший поверх і стояком біля цієї стіни, за 1,7 м від осі 3, піднімається на другий. Під перекриттям, на 3,85 м над підлогою, над проходом між площадками обслуговування магістраль доходить до колектора над вакуумними котлами; від колектора до кожного котла — опуск із засувкою, окремий відвід — до котла рідких соусів. Від західного кінця колектора відвід іде до двох варочних комплексів емульгованих соусів біля осі 1, від східного — над перегородкою по осі 4 до CIP-мийки.</p>
     <dl class="cells b-elcells" id="b-steamcells"></dl>
+    <div class="tbl-box" id="b-steamload"></div>
     <div class="sw-go" id="b-steamgo"><button class="btn" type="button" data-stfl="f1">На плані: 1 поверх</button><button class="btn" type="button" data-stfl="f2">2 поверх</button><button class="btn" type="button" id="b-steam-3d">У 3D, 2 поверх</button><button class="btn" type="button" id="b-steam-site">Територія в 3D</button></div>
     <div class="cols">
       <section>
         <h3>Прийнято</h3>
         <ul>
-          <li>Труба магістралі Ø57 × 3,5 (DN50), як у чинного паропроводу; відводи до вакуумних котлів Ø32 × 3, до котла рідких соусів Ø38 × 3.</li>
+          <li>Магістраль і колектор Ø108 × 4 (DN100): при одночасному нагріві всіх споживачів (≈1,9 т/год) швидкість пари ≈31 м/с при 3 бар і ≈21 м/с при 5 бар, втрата тиску ≈0,15 бар. Нинішня труба Ø57 таку витрату не пропустить.</li>
+          <li>Відводи за витратою: до кожного котла 2000 л і до CIP-мийки Ø45 × 3, спільний до комплексів емульгованих соусів Ø38 × 3, далі Ø32 × 3 до кожного.</li>
+          <li>Магістраль з ухилом 0,002–0,003 за ходом пари; у нижній точці, біля підніжжя стояка на першому поверсі, — конденсатовідвідник (КВ).</li>
           <li>Ізоляція 50 мм мінеральною ватою в алюмінієвому кожусі, маркування червоними кільцями. Надворі опори естакади через 4–5 м, на доріжці опор немає; у поточному виробництві підвіси від покрівлі через 3 м.</li>
           <li>Головна засувка на стояку на 1,4 м над підлогою другого поверху, на кожному опуску до котла — своя засувка на висоті близько 1 м над площадкою обслуговування.</li>
           <li>Гільзи там, де труба йде крізь стіни котелень, поточного виробництва, будівлі й перекриття між поверхами.</li>
@@ -1086,7 +1090,8 @@ html { scroll-padding-top: calc(var(--hdr-h, 64px) + 10px); }
         <ul>
           <li>Маршрут естакади й траса в поточному виробництві: прийнято найкоротший шлях, за 1,6 м від його західної стіни. Якщо там двері, кран-балка чи обладнання, трасу зсунемо.</li>
           <li>Конденсатопровід назад у котельню не намальовано: скажіть, чи конденсат повертається, чи йде в каналізацію, як зараз.</li>
-          <li>Варочні комплекси емульгованих соусів (поз. 9) до пари не підключено: уточнити, чи вони гріються парою.</li>
+          <li>Тиск пари в магістралі. DN100 розраховано на 3 бар і вище. Якщо в магістраль іде лише 2 бар, при одночасному нагріві всіх споживачів швидкість ≈40 м/с — тоді краще DN125 або подавати в магістраль 4–5 бар і знижувати тиск редукторами біля споживачів.</li>
+          <li>Витрату пари пораховано за часом нагріву (таблиця вище). Звірте з паспортами котлів, комплексів і CIP-мийки: якщо там більше, перерахую діаметри.</li>
           <li>Висота естакади ≈3,6 м: якщо під нею має проїжджати машина з дровами до котелень, естакаду треба підняти до 4,5 м.</li>
         </ul>
       </section>
@@ -1166,7 +1171,7 @@ html { scroll-padding-top: calc(var(--hdr-h, 64px) + 10px); }
           <li><b>Каналізація, редакція 7.</b> За вашою схемою 02.10.2026: 24 трапи (10 на першому і 14 на другому поверсі), лінії ухилу підлоги до трапів, шість місць збору води на другому поверсі, 13 отворів у плиті 0,000 і 11 у плиті +4,900. Розводку другого поверху перераховано під нові трапи. На технічному поверсі нанесено укриття, морозильну камеру і заштриховану ділянку без підпису.</li>
           <li><b>Перший поверх, редакція 8.</b> За вашою схемою 03.10.2026 розставлено шість ліній розливу, етикетування й пакування: 28 машин, чотири термотунелі, близько 84 м транспортерів, палетопакувальник, санпропускник і дой-пак в існуючій будівлі. Звірено з трапами, стояками, колонами й перегородками.</li>
           <li><b>Перший поверх, редакція 9.</b> Обидві лабораторії перенесено до зовнішньої стіни по осі 6: R&amp;D у 101.6, виробнича у 101.8, кабінет майстра зміни — у 101.7. У цеху спроєктовано світло, 22 озонові опромінювачі відкритого типу, виводи до машин, розетки 230 і 400 В, щити ЩС-1 і ЩО-1, 14 камер, шафу ШТК-1 у коридорі, Wi-Fi і RJ45, п’ять рукомийників.</li>
-          <li><b>Паропровід.</b> Від котелень 8 і 12 естакадою над газоном, крізь поточне виробництво, на 1 поверх і стояком на 2 поверх до колектора над вакуумними котлами; опуски із засувками до чотирьох вакуумних котлів і окремий відвід до котла рідких соусів. На плані поверху й у 3D — шар «Пара», на схемі території — траса; довжини й прийняті рішення — в окремому розділі.</li>
+          <li><b>Паропровід.</b> Від котелень 8 і 12 естакадою над газоном, крізь поточне виробництво, на 1 поверх і стояком на 2 поверх до колектора над вакуумними котлами; опуски із засувками до чотирьох вакуумних котлів, котла рідких соусів, двох комплексів емульгованих соусів і CIP-мийки. Магістраль Ø108 (DN100) за розрахунком витрати пари. На плані поверху й у 3D — шар «Пара», на схемі території — траса; довжини й прийняті рішення — в окремому розділі.</li>
           <li><b>Територія.</b> За схемою 07.08.2025 додано ділянку з огорожею і в’їздом, офіс на три поверхи, склад такої самої висоти, одноповерховий перехід, поточне виробництво з похилим дахом 6 і 4 м, навіси, котельні, генератор, контейнери, парковку, газон з деревами й фазанами, водойму з лежаками й парасольками. У 3D — вид «Територія», прогулянкою можна вийти надвір.</li>
         </ul>
       </section>
@@ -4579,26 +4584,43 @@ function b3PlanSelect(svg, id) {
   svg.querySelectorAll('.b-floor[data-id], .b-cell, .b-zone, .b-rlab, .b-cell-t, .q-item, .b-el[data-id], .sw [data-id]').forEach(el => el.classList.toggle('sel', !!id && el.dataset.id === id));
 }
 
-/* Паропровід від котелень 8 і 12 до варочних котлів 2 поверху.
+/* Паропровід від котелень 8 і 12 до варочних котлів, варочних комплексів емульгованих соусів і CIP-мийки (2 поверх).
    Маршрут прийнято: з кожної котельні труба виходить на висоті ≈3,6 м над землею й естакадою над газоном іде до вузла біля поточного виробництва;
    далі одна магістраль усередині будівлі 5 (на підвісах від покрівлі, за 1,6 м від західної стіни), крізь стіну по осі А на 1 поверх, стояком біля стіни на 2 поверх
-   і під перекриттям — проходом між площадками обслуговування — до колектора над котлами. Труба Ø57 × 3,5 (DN50), як у чинного паропроводу; відводи до котлів — DN25 і DN32.
+   і під перекриттям — проходом між площадками обслуговування — до колектора над котлами. Колектор продовжено на захід до комплексів емульгованих соусів
+   і на схід, крізь перегородку по осі 4, до CIP-мийки. Магістраль і колектор Ø108 × 4 (DN100), відводи — за витратою пари (див. B3_STEAM_LOAD).
    Координати в мм у системі будівлі; z — висота від відм. 0,000 (земля на −1,230). */
-const B3_STEAM_Z = { out: 2350, top: 8750, vk: 6700, rk: 6600, cut: 4720 };
-const B3_STEAM_DN = { 50: 'Ø57 × 3,5 (DN50)', 32: 'Ø38 × 3 (DN32)', 25: 'Ø32 × 3 (DN25)' };
+const B3_STEAM_Z = { out: 2350, top: 8750, vk: 6700, rk: 6600, em: 6300, cip: 6100, cut: 4720 };
+const B3_STEAM_DN = { 100: 'Ø108 × 4 (DN100)', 40: 'Ø45 × 3 (DN40)', 32: 'Ø38 × 3 (DN32)', 25: 'Ø32 × 3 (DN25)' };
+const B3_STEAM_OD = { 100: 108, 40: 45, 32: 38, 25: 32 };
+/* споживачі й оцінка витрати пари для вибору діаметрів: нагрів за вказаний час + 15 % втрат, пара 3 бар надлишкового тиску (r ≈ 2133 кДж/кг) */
+const B3_STEAM_LOAD = [
+  { id: 'vk', name: 'Вакуумний варочний котел 2000 л', n: 4, kg: 291, how: '2000 кг соусу, 20 → 95 °C за 60 хв', dn: 40 },
+  { id: 'rk', name: 'Варочний котел рідких соусів 2000 л', n: 1, kg: 291, how: 'так само, як вакуумний', dn: 40 },
+  { id: 'em', name: 'Варочний комплекс емульгованих соусів 500 л', n: 2, kg: 97, how: '500 кг, 20 → 95 °C за 45 хв', dn: 25 },
+  { id: 'cip', name: 'CIP-мийка', n: 1, kg: 220, how: '1000 л розчину, 15 → 80 °C за 40 хв', dn: 40 }
+];
 const B3_STEAM = (() => {
   const Z = B3_STEAM_Z, X = 13700, J = 12450, Yh = 14150, R = [];
   const run = (id, code, name, dn, pts, extra) => R.push(Object.assign({ id, code, name, dn, pts }, extra || {}));
-  run('ps12', 'П1', 'Від котельні 12 до вузла на естакаді', 50, [[683, 44500, Z.out], [J, 44500, Z.out]]);
-  run('ps8', 'П2', 'Від котельні 8 до вузла на естакаді', 50, [[J, 51950, Z.out], [J, 44500, Z.out]]);
-  run('psm', 'П', 'Магістраль: естакада, поточне виробництво, стояк на 2 поверх', 50, [[J, 44500, Z.out], [X, 44500, Z.out], [X, 18050, Z.out], [X, 18050, Z.top], [X, Yh, Z.top]], { main: true });
-  run('psh', 'П', 'Колектор над вакуумними котлами', 50, [[15350, Yh, Z.top], [8800, Yh, Z.top]], { main: true });
-  [14750, 12300, 10150, 8200].forEach((x, i) => run('psk' + (i + 1), 'П' + (i + 3), `Відвід до вакуумного котла ${i + 1}`, 25, [[x + 600, Yh, Z.top], [x + 600, Yh, Z.vk], [x + 600, 13860, Z.vk]], { to: 'vk' + (i + 1), valve: [x + 600, Yh, 7100] }));
-  run('psr', 'П7', 'Відвід до котла рідких соусів', 32, [[9175, Yh, Z.top], [9175, 6550, Z.top], [9175, 6550, Z.rk], [9175, 6380, Z.rk]], { to: 'rk', valve: [9175, 6550, 7000] });   // між вакуумними котлами 3 і 4
+  run('ps12', 'П1', 'Від котельні 12 до вузла на естакаді', 100, [[683, 44500, Z.out], [J, 44500, Z.out]]);
+  run('ps8', 'П2', 'Від котельні 8 до вузла на естакаді', 100, [[J, 51950, Z.out], [J, 44500, Z.out]]);
+  run('psm', 'П', 'Магістраль: естакада, поточне виробництво, стояк на 2 поверх', 100, [[J, 44500, Z.out], [X, 44500, Z.out], [X, 18050, Z.out], [X, 18050, Z.top], [X, Yh, Z.top]], { main: true });
+  run('psh', 'П', 'Колектор над вакуумними котлами', 100, [[15350, Yh, Z.top], [8800, Yh, Z.top]], { main: true });
+  [14750, 12300, 10150, 8200].forEach((x, i) => run('psk' + (i + 1), 'П' + (i + 3), `Відвід до вакуумного котла ${i + 1}`, 40, [[x + 600, Yh, Z.top], [x + 600, Yh, Z.vk], [x + 600, 13860, Z.vk]], { to: 'vk' + (i + 1), valve: [x + 600, Yh, 7100] }));
+  run('psr', 'П7', 'Відвід до котла рідких соусів', 40, [[9175, Yh, Z.top], [9175, 6550, Z.top], [9175, 6550, Z.rk], [9175, 6380, Z.rk]], { to: 'rk', valve: [9175, 6550, 7000] });   // між вакуумними котлами 3 і 4
+  /* комплекси емульгованих соусів біля осі 1: спільний відвід DN32 від кінця колектора, далі по DN25 до кожного реактора */
+  run('pse', 'П8', 'Відвід до варочних комплексів емульгованих соусів', 32, [[8800, Yh, Z.top], [3400, Yh, Z.top]]);
+  run('pse1', 'П8.1', 'До комплексу емульгованих соусів 1', 25, [[3400, Yh, Z.top], [3400, 12800, Z.top], [3400, 12800, Z.em], [3150, 12800, Z.em]], { to: 'em1', valve: [3400, 12800, 6900] });
+  run('pse2', 'П8.2', 'До комплексу емульгованих соусів 2', 25, [[3400, Yh, Z.top], [3400, 14700, Z.top], [3400, 14700, Z.em], [3150, 14700, Z.em]], { to: 'em2', valve: [3400, 14700, 6900] });
+  /* CIP-мийка в приміщенні за перегородкою по осі 4: від кінця колектора на схід, над перегородкою */
+  run('psc', 'П9', 'Відвід до CIP-мийки', 40, [[15350, Yh, Z.top], [18200, Yh, Z.top], [18200, 15550, Z.top], [18200, 15550, Z.cip], [18550, 15550, Z.cip]], { to: 'cip', valve: [18200, 15550, 6500] });
   return R;
 })();
-/* головна засувка на стояку, на висоті 1,4 м над підлогою 2 поверху; гільзи там, де труба йде крізь стіну чи перекриття */
+/* головна засувка на стояку, на висоті 1,4 м над підлогою 2 поверху; гільзи там, де труба йде крізь стіну чи перекриття;
+   конденсатовідвідник у нижній точці магістралі — біля підніжжя стояка на 1 поверсі */
 const B3_STEAM_MAINVALVE = [13700, 18050, 6300];
+const B3_STEAM_TRAP = [13700, 18050, 2350];
 const B3_STEAM_SLEEVES = [[683, 44500, 2350, 'x'], [12450, 51950, 2350, 'y'], [13700, 42618, 2350, 'y'], [13700, 18685, 2350, 'y'], [13700, 18050, 4720, 'z']];
 
 /* де лежить точка: у будівлі (проєкт), у поточному виробництві (5) чи надворі */
@@ -4615,9 +4637,9 @@ function b3SteamSegs() {
       out.push({ r, a: p, b: q, where: w, fl: w !== 'bld' ? 'out' : m[2] < B3_STEAM_Z.cut ? 'f1' : 'f2', L: Math.hypot(q[0] - p[0], q[1] - p[1], q[2] - p[2]) }); } }));
   return out;
 }
-/* довжини, м: надворі, у поточному виробництві, у будівлі; окремо магістраль DN50 і відводи */
+/* довжини, м: надворі, у поточному виробництві, у будівлі; окремо за діаметрами */
 function b3SteamStats() {
-  const s = { out: 0, b5: 0, bld: 0, dn50: 0, dn32: 0, dn25: 0 };
+  const s = { out: 0, b5: 0, bld: 0 }; Object.keys(B3_STEAM_DN).forEach(d => { s['dn' + d] = 0; });
   b3SteamSegs().forEach(g => { s[g.where] += g.L / 1000; s['dn' + g.r.dn] += g.L / 1000; });
   Object.keys(s).forEach(k => { s[k] = Math.round(s[k] * 10) / 10; }); s.all = Math.round((s.out + s.b5 + s.bld) * 10) / 10; return s;
 }
@@ -4636,15 +4658,20 @@ function b3SteamSvg(o) {
   out.push(`<g class="st-riser"><circle cx="${riser[0]}" cy="${riser[1]}" r="${R}"/><circle class="dot" cx="${riser[0]}" cy="${riser[1]}" r="${R * 0.35}"/></g>`);
   if (FL === 'f1') {
     lab.push(T(riser[0] - 300 * K, riser[1] - 330 * K, 'Ст.П ↑ на 2 поверх', 'st-t', 250 * K, 'text-anchor="end"'));
-    lab.push(`<g transform="translate(${riser[0] - 300 * K} 21900) rotate(-90)">${T(0, 0, 'П Ø57 від котелень 8 і 12', 'st-t', 250 * K)}</g>`);
+    const tp = B3_STEAM_TRAP, tw = 150 * K; out.push(`<g class="st-trap"><rect x="${tp[0] + 260 * K - tw}" y="${tp[1] - tw}" width="${2 * tw}" height="${2 * tw}"/><line x1="${tp[0] + 260 * K - tw}" y1="${tp[1] + tw}" x2="${tp[0] + 260 * K + tw}" y2="${tp[1] - tw}"/></g>`);
+    lab.push(T(tp[0] + 520 * K, tp[1] + 90 * K, 'КВ', 'st-t sm', 210 * K, 'text-anchor="start"'));
+    lab.push(`<g transform="translate(${riser[0] - 300 * K} 21900) rotate(-90)">${T(0, 0, 'П Ø108 від котелень 8 і 12', 'st-t', 250 * K)}</g>`);
   } else {
-    lab.push(T(riser[0] + 280 * K, riser[1] - 280 * K, 'Ст.П Ø57 з 1 поверху', 'st-t', 240 * K, 'text-anchor="start"'));
+    lab.push(T(riser[0] + 280 * K, riser[1] - 280 * K, 'Ст.П Ø108 з 1 поверху', 'st-t', 240 * K, 'text-anchor="start"'));
     const v = B3_STEAM_MAINVALVE; out.push(b3SteamValve(v[0], v[1] - 520 * K, K, 'v'));
-    lab.push(T(11500, 14150 - 260 * K, 'колектор П Ø57', 'st-t', 240 * K));
-    B3_STEAM.filter(r => r.to).forEach(r => { const d = r.pts[1], end = r.pts[r.pts.length - 1];
+    lab.push(T(11500, 14150 - 260 * K, 'колектор П Ø108', 'st-t', 240 * K));
+    B3_STEAM.filter(r => r.to).forEach(r => { const d = r.pts.find((p, i) => i < r.pts.length - 1 && p[0] === r.pts[i + 1][0] && p[1] === r.pts[i + 1][1] && p[2] !== r.pts[i + 1][2]), end = r.pts[r.pts.length - 1];
       out.push(`<g class="st-drop"><circle cx="${d[0]}" cy="${d[1]}" r="${R * 0.75}"/><line x1="${d[0]}" y1="${d[1]}" x2="${end[0]}" y2="${end[1]}"/></g>`);
-      if (r.valve) out.push(b3SteamValve(r.valve[0], r.valve[1] + 360 * K, K, 'h'));
-      lab.push(T(d[0] + 200 * K, d[1] + 700 * K, r.code + ' Ø' + (r.dn === 25 ? 32 : 38), 'st-t sm', 210 * K, 'text-anchor="start"')); });
+      const side = r.to === 'cip' ? -1 : 1, vy = r.to === 'cip' ? d[1] - 360 * K : d[1] + 360 * K;
+      if (r.valve) out.push(b3SteamValve(d[0], vy, K, 'h'));
+      const txt = r.code + ' Ø' + B3_STEAM_OD[r.dn] + (r.to === 'cip' ? ' до CIP-мийки' : '');
+      lab.push(side < 0 ? T(d[0] - 350 * K, d[1] + 90 * K, txt, 'st-t sm', 210 * K, 'text-anchor="end"') : T(d[0] + 200 * K, d[1] + 700 * K, txt, 'st-t sm', 210 * K, 'text-anchor="start"')); });
+    lab.push(T(5600, 14150 - 240 * K, 'П8 Ø38', 'st-t sm', 210 * K));
   }
   return `<g class="st">${out.join('')}${lab.join('')}</g>`;
 }
@@ -4655,15 +4682,23 @@ function b3SteamValve(x, y, K, dir) { const s = 120 * K;
 /* схема території: маршрут від котелень до будівлі */
 function b3SteamSiteSvg() {
   return '<g class="st st-site">' + b3SteamSegs().filter(g => g.where !== 'bld' && Math.hypot(g.b[0] - g.a[0], g.b[1] - g.a[1]) > 1)
-    .map(g => `<line class="st-p d50${g.where === 'b5' ? ' ex' : ''}" x1="${g.a[0]}" y1="${g.a[1]}" x2="${g.b[0]}" y2="${g.b[1]}"/>`).join('') + '</g>';
+    .map(g => `<line class="st-p d100${g.where === 'b5' ? ' ex' : ''}" x1="${g.a[0]}" y1="${g.a[1]}" x2="${g.b[0]}" y2="${g.b[1]}"/>`).join('') + '</g>';
 }
 function b3SteamLegend(fl) {
   if (fl !== 'f1' && fl !== 'f2') return '';
   return `<span><svg class="st-gl" viewBox="0 0 60 16"><line class="st-gl-p" x1="2" y1="8" x2="58" y2="8"/></svg>Паропровід П, ізоляція 50 мм</span>`
     + `<span><svg class="st-gl" viewBox="0 0 60 16"><line class="st-gl-p ex" x1="2" y1="8" x2="58" y2="8"/></svg>Те саме в поточному виробництві</span>`
     + `<span><svg class="st-gl" viewBox="0 0 20 20"><circle class="st-gl-r" cx="10" cy="10" r="7"/><circle class="st-gl-d" cx="10" cy="10" r="2.5"/></svg>Стояк між поверхами</span>`
-    + (fl === 'f2' ? `<span><svg class="st-gl" viewBox="0 0 20 20"><circle class="st-gl-r" cx="10" cy="10" r="6"/></svg>Опуск до котла</span><span><svg class="st-gl" viewBox="0 0 24 16"><path class="st-gl-v" d="M3 3 L3 13 L21 3 L21 13 Z"/></svg>Засувка</span>` : '')
+    + (fl === 'f1' ? `<span><svg class="st-gl" viewBox="0 0 20 20"><rect class="st-gl-r" x="3" y="3" width="14" height="14"/><line class="st-gl-p" x1="3" y1="17" x2="17" y2="3" style="stroke-width:1.5"/></svg>КВ — конденсатовідвідник у нижній точці магістралі</span>` : '')
+    + (fl === 'f2' ? `<span><svg class="st-gl" viewBox="0 0 20 20"><circle class="st-gl-r" cx="10" cy="10" r="6"/></svg>Опуск до споживача</span><span><svg class="st-gl" viewBox="0 0 24 16"><path class="st-gl-v" d="M3 3 L3 13 L21 3 L21 13 Z"/></svg>Засувка</span>` : '')
     + '<span>Висота: надворі й у поточному виробництві ≈3,6 м над землею, на 2 поверсі 3,85 м над підлогою</span>';
+}
+
+/* перевірка магістралі DN100 (внутрішній Ø100) на пікову витрату: швидкість пари й втрати тиску до найдальшого споживача (≈80 м з місцевими опорами) */
+function b3SteamCalc() {
+  const kg = B3_STEAM_LOAD.reduce((t, c) => t + c.n * c.kg, 0), A = Math.PI * 0.1 * 0.1 / 4, V = { 2: 0.605, 3: 0.462, 5: 0.316 };   // м³/кг сухої насиченої пари за надлишковим тиском, бар
+  const vel = p => kg / 3600 * V[p] / A, dp = p => 0.018 * 800 * vel(p) ** 2 / V[p] / 2 / 1e5;
+  return { kg, v2: vel(2), v3: vel(3), v5: vel(5), dp3: dp(3) };
 }
 
 /* Територія підприємства за схемою 07.08.2025 (ARCHICAD), у координатах моделі будівлі, мм: X — від осі 1 до осі 6, Y — від осі Г до осі А. Згенеровано site_prep.py */
@@ -5386,7 +5421,7 @@ function b3Init3D(host, labelLayer) {
   const stG = { f1: new THREE.Group(), f2: new THREE.Group(), out: new THREE.Group() };
   if (typeof B3_STEAM !== 'undefined') { G.f1.add(stG.f1); G.f2.add(stG.f2); G.site.add(stG.out);
     const clad = M(0xd3d8dc, 0.55, 0.3), ring = M(0xc8102e, 0.1, 0.5), stl = M(0x6b737b, 0.45, 0.5), wheelM = M(0xc8102e, 0.2, 0.45), up = new THREE.Vector3(0, 1, 0);
-    const RAD = { 50: 0.08, 32: 0.06, 25: 0.05 }, V = p => new THREE.Vector3(p[0] / 1000, p[2] / 1000, p[1] / 1000), GLs = -1.23;
+    const RAD = { 100: 0.115, 40: 0.07, 32: 0.065, 25: 0.055 }, V = p => new THREE.Vector3(p[0] / 1000, p[2] / 1000, p[1] / 1000), GLs = -1.23;
     const where = p => { const w = b3SteamWhere(p[0], p[1]); return w !== 'bld' ? stG.out : p[2] < B3_STEAM_Z.cut ? stG.f1 : stG.f2; };
     const tube = (a, b, r, m, g) => { const va = V(a), vb = V(b), d = vb.clone().sub(va), L = d.length(); if (L < 0.005) return null;
       const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, L, 16, 1), m); c.position.copy(va).add(vb).multiplyScalar(0.5); c.quaternion.setFromUnitVectors(up, d.normalize()); c.castShadow = true; c.receiveShadow = true; g.add(c); return c; };
@@ -5396,13 +5431,15 @@ function b3Init3D(host, labelLayer) {
     B3_STEAM.forEach(rn => rn.pts.forEach((p, i) => { const r = RAD[rn.dn], s0 = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 10), clad); s0.position.copy(V(p)); where(p).add(s0);   // відводи
       if (i === rn.pts.length - 1 && rn.to) { const q = rn.pts[i - 1], d = [p[0] - q[0], p[1] - q[1]], L = Math.hypot(...d);                         // штуцер у сорочку котла
         tube(p, [p[0] + d[0] / L * 60, p[1] + d[1] / L * 60, p[2]], r * 0.75, stl, where(p)); } }));
-    const valve = p => { const g = where(p), c = V(p);
-      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.2, 14), stl); body.position.copy(c); g.add(body);                      // корпус на вертикальній трубі
-      const sy = p[1] > 17000 ? -1 : 1, stem = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.22, 8), stl); stem.rotation.x = Math.PI / 2; stem.position.set(c.x, c.y, c.z + sy * 0.15); g.add(stem);
-      const w = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.013, 8, 24), wheelM); w.position.set(c.x, c.y, c.z + sy * 0.26); g.add(w);
+    const valve = (p, r) => { const g = where(p), c = V(p);
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(r + 0.02, r + 0.02, 0.22, 14), stl); body.position.copy(c); g.add(body);                // корпус на вертикальній трубі
+      const sy = p[1] > 17000 ? -1 : 1, stem = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.22, 8), stl); stem.rotation.x = Math.PI / 2; stem.position.set(c.x, c.y, c.z + sy * (r + 0.1)); g.add(stem);
+      const w = new THREE.Mesh(new THREE.TorusGeometry(r > 0.1 ? 0.15 : 0.11, 0.013, 8, 24), wheelM); w.position.set(c.x, c.y, c.z + sy * (r + 0.21)); g.add(w);
       [0, Math.PI / 2].forEach(a => { const sp = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.012, 0.012), wheelM); sp.rotation.z = a; sp.position.copy(w.position); g.add(sp); }); };
-    B3_STEAM.filter(r => r.valve).forEach(r => valve(r.valve)); valve(B3_STEAM_MAINVALVE);
-    B3_STEAM_SLEEVES.forEach(([x, y, z, ax]) => { const c = V([x, y, z]), m = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, ax === 'z' ? 0.4 : 0.3, 16), stl);
+    B3_STEAM.filter(r => r.valve).forEach(r => valve(r.valve, RAD[r.dn])); valve(B3_STEAM_MAINVALVE, RAD[100]);
+    { const t = B3_STEAM_TRAP, g = where(t), x = t[0] / 1000, z = t[1] / 1000, y0 = t[2] / 1000 - RAD[100];                                        // конденсатовідвідник під стояком
+      C(g, 0.055, 0.45, x, y0 - 0.225, z, stl, 'y', 14); B(g, 0.18, 0.13, 0.13, x, y0 - 0.52, z, M(0x2f6fb0, 0.3, 0.5)); C(g, 0.016, y0 - 0.6 - 0.5, x, (y0 - 0.6 + 0.5) / 2, z, stl, 'y', 8); }
+    B3_STEAM_SLEEVES.forEach(([x, y, z, ax]) => { const c = V([x, y, z]), m = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, ax === 'z' ? 0.4 : 0.3, 16), stl);
       if (ax === 'x') m.rotation.z = Math.PI / 2; if (ax === 'y') m.rotation.x = Math.PI / 2; m.position.copy(c); where([x, y, z]).add(m); });
     /* опори естакади надворі: стійка з ригелем і п’ятою, крок ≈4,5 м; на доріжці не ставимо */
     const onPath = (X, Y) => typeof B3_SITE !== 'undefined' && B3_SITE.path.some(a => b3InPoly(X, Y, a.o) && !(a.h || []).some(h => b3InPoly(X, Y, h)));
@@ -5412,7 +5449,7 @@ function b3Init3D(host, labelLayer) {
         const x = X / 1000, z = Y / 1000, h = top - GLs; B(stG.out, 0.14, h, 0.14, x, GLs + h / 2, z, stl); B(stG.out, 0.3, 0.02, 0.3, x, GLs + 0.01, z, stl);
         const cb = B(stG.out, 0.56, 0.06, 0.1, x, top - 0.03, z, stl); cb.rotation.y = Math.atan2(uy, ux) + Math.PI / 2; } });
     /* у поточному виробництві: підвіси від покрівлі через ≈3 м (покрівля похила: 4 м над землею з боку газону, 6 м з боку майданчика) */
-    { const X = 13.7, roof = GLs + 4 + (X - 12.13) / (30.69 - 12.13) * 2 - 0.15, top = B3_STEAM_Z.out / 1000 + RAD[50];
+    { const X = 13.7, roof = GLs + 4 + (X - 12.13) / (30.69 - 12.13) * 2 - 0.15, top = B3_STEAM_Z.out / 1000 + RAD[100];
       for (let Y = 20000; Y < 42000; Y += 3000) { const z = Y / 1000; B(stG.out, 0.025, roof - top, 0.025, X, (roof + top) / 2, z, stl); B(stG.out, 0.24, 0.03, 0.05, X, top + 0.015, z, stl); } }
     b3Merge(stG.out, new Set(), 0);
   }
@@ -5885,8 +5922,13 @@ function b3Init3D(host, labelLayer) {
   $('b-t-steam3').addEventListener('change', e => view && view.setSteam(e.target.checked));
   /* паропровід: довжини, переходи на план і в 3D */
   if (typeof b3SteamStats === 'function') { const st = b3SteamStats(), m = v => fmtN(v, 1) + ' м';
+    const ca = b3SteamCalc();
     $('b-steamcells').innerHTML = [['Довжина траси', `≈${m(st.all)}`], ['Надворі, естакадою', `≈${m(st.out)}`], ['У поточному виробництві', `≈${m(st.b5)}`], ['У будівлі', `≈${m(st.bld)}, зі стояком`],
-      ['Магістраль Ø57 × 3,5', `≈${m(st.dn50)}`], ['Відводи до котлів', `4 × Ø32 і 1 × Ø38, разом ≈${m(st.dn25 + st.dn32)}`]].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+      ['Магістраль і колектор Ø108 × 4', `≈${m(st.dn100)}`], ['Відводи', `Ø45 — ${m(st.dn40)}, Ø38 — ${m(st.dn32)}, Ø32 — ${m(st.dn25)}`],
+      ['Пара, якщо все гріється разом', `≈${fmtN(ca.kg / 1000, 1)} т/год`], ['Швидкість у Ø108', `≈${Math.round(ca.v3)} м/с при 3 бар, ≈${Math.round(ca.v5)} при 5 бар`]].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    $('b-steamload').innerHTML = `<table class="b-tbl"><thead><tr><th>Споживач</th><th class="num">Шт.</th><th class="num">Пара, кг/год на 1</th><th>Як пораховано</th><th>Відвід</th></tr></thead><tbody>`
+      + B3_STEAM_LOAD.map(c => `<tr><td>${c.name}</td><td class="num">${c.n}</td><td class="num">≈${c.kg}</td><td>${c.how}, +15 % втрат</td><td>Ø${B3_STEAM_OD[c.dn]} (DN${c.dn})</td></tr>`).join('')
+      + `<tr><td><b>Разом, якщо все гріється одночасно</b></td><td class="num">${B3_STEAM_LOAD.reduce((t, c) => t + c.n, 0)}</td><td class="num"><b>≈${fmtN(ca.kg, 0)}</b></td><td colspan="2">Ø108 (DN100): ≈${Math.round(ca.v2)} м/с при 2 бар, ≈${Math.round(ca.v3)} при 3 бар, ≈${Math.round(ca.v5)} при 5 бар; втрата тиску до найдальшого споживача ≈${fmtN(ca.dp3, 2)} бар при 3 бар</td></tr></tbody></table>`;
     document.querySelectorAll('#b-steamgo [data-stfl]').forEach(b => b.addEventListener('click', () => { $('b-t-steam').checked = true; if (b.dataset.stfl !== S.floor) setFloor(b.dataset.stfl); else draw(); $('b-h-plan').scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
     $('b-steam-3d').addEventListener('click', () => { ensureView(); if (!view) return; $('b-t-steam3').checked = true; view.setSteam(true); const fb = document.querySelector('#b-modes [data-mode=floor]'); if (fb && fb.getAttribute('aria-pressed') !== 'true') fb.click(); if (S.floor !== 'f2') setFloor('f2'); $('b-stage').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
     $('b-steam-site').addEventListener('click', () => { const b = document.querySelector('#b-modes [data-mode=site]'); if (b) b.click(); $('b-t-steam3').checked = true; if (view) view.setSteam(true); $('b-stage').scrollIntoView({ behavior: 'smooth', block: 'center' }); }); }
